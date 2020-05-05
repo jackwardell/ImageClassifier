@@ -9,6 +9,7 @@ Predict flower name from an image with predict.py along with the probability of 
 
 
 import click
+import torch
 from train_pred_funcs import get_dataloaders, get_model, train_model, save_checkpoint, load_checkpoint, predict
 
 @click.command()
@@ -18,6 +19,7 @@ from train_pred_funcs import get_dataloaders, get_model, train_model, save_check
 @click.option("category_names", "--category_names", required=False)
 @click.option("gpu", '--gpu', is_flag=True, default=True)
 def do_predict(filename, checkpoint, topk, category_names, gpu):
+    device = torch.device('cuda' if (torch.cuda.is_available() and gpu) else 'cpu')
     model = load_checkpoint(checkpoint_path=checkpoint)
     prediction = predict(filename, model, topk=topk)
     click.echo(prediction)
